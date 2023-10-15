@@ -395,8 +395,10 @@ if (isset($_POST['delete'])) {
 		// Check if banned
 		checkBan($board['uri']);
 
+		$is_mod = isset($_POST['mod']) && $_POST['mod'];
+
 		// Check for CAPTCHA right after opening the board so the "return" link is in there
-		if ($config['recaptcha']) {
+		if (!$is_mod && $config['recaptcha']) {
 			if (!isset($_POST['g-recaptcha-response']))
 				error($config['error']['bot']);	
 
@@ -411,7 +413,7 @@ if (isset($_POST['delete'])) {
 			}
 		}
 		// hCaptcha
-		if ($config['hcaptcha']) {
+		if (!$is_mod && $config['hcaptcha']) {
 			if (!isset($_POST['h-captcha-response'])) {
 				error($config['error']['bot']);
 			}
