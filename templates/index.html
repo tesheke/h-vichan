@@ -15,6 +15,8 @@
 
 	{% include 'header.html' %}
 	<title>{{ board.url }} - {{ board.title|e }}</title>
+	<link rel="alternate" type="application/rss+xml" title="board RSS" href="{{ config.domain }}{{ config['root'] }}{{board.uri}}/recent_rss20.xml" />
+	<link rel="alternate" type="application/rss+xml" title="forum RSS" href="{{ config.domain }}{{ config['root'] }}recent.xml" />
 </head>
 <body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} active-{% if not no_post_form %}index{% else %}ukko{% endif %}" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
 	{{ boardlist.top }}

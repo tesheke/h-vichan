@@ -22,6 +22,7 @@
 	<meta property="og:description" content="{{ thread.body_nomarkup|remove_modifiers|e }}" />
 
 	<link rel="alternate" type="application/rss+xml" title="thread RSS" href="{{ config.domain }}{{ config['root'] }}{{ board.uri }}/{{ config.dir.res }}{{ thread.id }}_rss20.xml" />
+	<link rel="alternate" type="application/rss+xml" title="board RSS" href="{{ config.domain }}{{ config['root'] }}{{board.uri}}/recent_rss20.xml" />
 	<link rel="alternate" type="application/rss+xml" title="forum RSS" href="{{ config.domain }}{{ config['root'] }}recent.xml" />
 
 	<title>{{ board.url }} - {{ meta_subject }}</title>
