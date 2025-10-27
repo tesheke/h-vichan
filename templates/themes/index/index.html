@@ -29,6 +29,9 @@
 					<a href="{{ config.board_path|sprintf(board.uri) }}">
 						{{ board.title|e }}
 					</a>
+					<a href="{{ config.board_path|sprintf(board.uri) }}recent_rss20.xml">
+						[rss]
+					</a>
 				</li>
 			{% endfor %}
 		</ul>
