@@ -73,6 +73,12 @@ function createBoardlist($mod=false) {
 
 function error($message, $priority = true, $debug_stuff = false) {
 	global $board, $mod, $config, $db_error;
+
+	if ($config['ignore_error']['bot']
+		&& $message == $config['error']['bot']) {
+
+		return;
+	};
 	
 	if ($config['syslog'] && $priority !== false) {
 		// Use LOG_NOTICE instead of LOG_ERR or LOG_WARNING because most error message are not significant.

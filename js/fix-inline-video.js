@@ -1,0 +1,1 @@
+../../../splibrejp.boardjs/fix-inline-video.js
