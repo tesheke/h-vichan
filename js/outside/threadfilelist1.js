@@ -136,17 +136,11 @@ window.vichanThreadFileList1 = function() {
     img.alt = file.filename;
 
     const img_anchor = document.createElement('a');
-    img_anchor.href = file.src_url;
+    img_anchor.href = file.post_url;
     img_anchor.title = file.filename;
     img_anchor.target = '_blank';
-    const post_anchor = document.createElement('a');
-    post_anchor.href = file.post_url;
-    post_anchor.textContent = '>>' + post.no;
-    post_anchor.className = 'yalink';
     img_anchor.appendChild(img);
     div.appendChild(img_anchor);
-    div.appendChild(document.createElement('br'));
-    div.appendChild(post_anchor);
     return div;
   };
 
