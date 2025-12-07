@@ -41,7 +41,12 @@ window.VichanPath.vichan = '.json_encode(array(
 	// default: '%d.html'
 	'file_page' => $config['file_page'],
 	// default: 'png'
-	'thumb_ext' => $config['thumb_ext']
+	'thumb_ext' => $config['thumb_ext'],
+	// default: 255; For resizing, maximum thumbnail dimensions.
+	'thumb_width' => $config['thumb_width'],
+	'thumb_height' => $config['thumb_height'],
+	'thumb_op_width' => $config['thumb_op_width'],
+	'thumb_op_height' => $config['thumb_op_height']
 )).';
 
 ';

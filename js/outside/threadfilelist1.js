@@ -67,18 +67,27 @@ window.vichanThreadFileList1 = function() {
   async function phase4(v, div, json) {
     const board = div.getAttribute('data-board');
     const thread = div.getAttribute('data-thread');
+    const maximages = parseInt(div.getAttribute('data-max-images')) || 9999;
+    const thumb_width = parseInt(div.getAttribute('data-thumb-width')) || null;
+    const thumb_height = parseInt(div.getAttribute('data-thumb-height')) || null;
     let index = json.posts.length - 1;
+    let count = 0;
     for (; 0 <= index; --index) {
       const post = json.posts[index];
+      post.is_op = (index === 0);
       const files = v.post_json_list_files(post, board, thread);
       for (const file of files) {
-        const thumb = create_thumb(file, post, v);
+        const thumb = create_thumb(file, post, thumb_width, thumb_height, v);
         div.appendChild(thumb);
+        ++count;
+        if (count >= maximages) {
+          break;
+        };
       };
     };
   };
 
-  function create_thumb(file, post, v) {
+  function create_thumb(file, post, thumb_width, thumb_height, v) {
     const div = document.createElement('div');
     div.className = 'vichan threadfilelist1';
     if (file.tn_w >= file.tn_h) {
@@ -89,8 +98,20 @@ window.vichanThreadFileList1 = function() {
     const img = document.createElement('img');
     img.className = 'thumb';
     img.src = file.thumb_url;
-    img.width = file.tn_w;
-    img.height = file.tn_h;
+    if (thumb_width && post.is_op) {
+      img.width = file.tn_w / v.thumb_op_width * thumb_width;
+    } else if (thumb_width && !post.is_op) {
+      img.width = file.tn_w / v.thumb_width * thumb_width;
+    } else {
+      img.width = file.tn_w;
+    };
+    if (thumb_height && post.is_op) {
+      img.height = file.tn_h / v.thumb_op_height * thumb_height;
+    } else if (thumb_height && !post.is_op) {
+      img.height = file.tn_h / v.thumb_height * thumb_height;
+    } else {
+      img.height = file.tn_h;
+    };
     img.alt = file.filename;
 
     const img_anchor = document.createElement('a');
