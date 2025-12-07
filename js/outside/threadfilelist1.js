@@ -70,6 +70,9 @@ window.vichanThreadFileList1 = function() {
     const maximages = parseInt(div.getAttribute('data-max-images')) || 9999;
     const thumb_width = parseInt(div.getAttribute('data-thumb-width')) || null;
     const thumb_height = parseInt(div.getAttribute('data-thumb-height')) || null;
+    const visual_only = div.getAttribute('data-visual-only') === 'true';
+    const visual_exts = [
+      '.png', '.jpg', '.jpeg', '.gif', '.webp', '.avif', '.mp4', '.webm', '.ts'];
     let index = json.posts.length - 1;
     let count = 0;
     for (; 0 <= index; --index) {
@@ -77,11 +80,14 @@ window.vichanThreadFileList1 = function() {
       post.is_op = (index === 0);
       const files = v.post_json_list_files(post, board, thread);
       for (const file of files) {
+        if (visual_only && !visual_exts.includes(file.ext)) {
+          continue;
+        };
         const thumb = create_thumb(file, post, thumb_width, thumb_height, v);
         div.appendChild(thumb);
         ++count;
         if (count >= maximages) {
-          break;
+          return;
         };
       };
     };
@@ -98,17 +104,32 @@ window.vichanThreadFileList1 = function() {
     const img = document.createElement('img');
     img.className = 'thumb';
     img.src = file.thumb_url;
-    if (thumb_width && post.is_op) {
-      img.width = file.tn_w / v.thumb_op_width * thumb_width;
-    } else if (thumb_width && !post.is_op) {
-      img.width = file.tn_w / v.thumb_width * thumb_width;
+    const vichan_thumb_width = post.is_op ? v.thumb_op_width : v.thumb_width;
+    const vichan_thumb_height = post.is_op ? v.thumb_op_height : v.thumb_height;
+    if (!thumb_width && !thumb_height) {
+      img.width = file.tn_w;
+      img.height = file.tn_h;
+    } else if (thumb_width && !thumb_height) {
+      img.width = file.tn_w / vichan_thumb_width * thumb_width;
+      img.height = file.tn_h / vichan_thumb_width * thumb_width;
+    } else if (!thumb_width && thumb_height) {
+      img.width = file.tn_w / vichan_thumb_height * thumb_height;
+      img.height = file.tn_h / vichan_thumb_height * thumb_height;
+    } else {
+      const scalew = thumb_width / file.tn_w;
+      const scaleh = thumb_height / file.tn_h;
+      const scale = Math.min(scalew, scaleh);
+      img.width = file.tn_w * scale;
+      img.height = file.tn_h * scale;
+    };
+      
+    if (thumb_width) {
+      img.width = file.tn_w / vichan_thumb_width * thumb_width;
     } else {
       img.width = file.tn_w;
     };
-    if (thumb_height && post.is_op) {
-      img.height = file.tn_h / v.thumb_op_height * thumb_height;
-    } else if (thumb_height && !post.is_op) {
-      img.height = file.tn_h / v.thumb_height * thumb_height;
+    if (thumb_height) {
+      img.height = file.tn_h / vichan_thumb_height * thumb_height;
     } else {
       img.height = file.tn_h;
     };
