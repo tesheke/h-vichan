@@ -9,6 +9,43 @@
  *     <div data-vichan-threadfilelist1="true" data-board="jp" data-thread="1234">
  *       ここに //example.com/path/to/vichan/jp/res/1234.html のファイル一覧が挿入される
  *     </div>
+ *
+ * - タグ引数
+ *
+ *  - data-board: 必須. 例: "jp", "b"
+ *      board urlを指定して下さい.
+ *
+ *  - data-thread: 必須. 例: 1234
+ *      その板におけるスレッド番号(No.xxxのxxx)を指定して下さい.
+ *
+ *  - data-max-images: 省略可. 既定値: 9999 , 例: 2
+ *      表示する画像の数の上限を指定.
+ *
+ *  - data-visual-only: 省略可. 既定値: "false".
+ *      画像や動画のみを表示したい場合(zipやtxtなどを除外したい場合)に
+ *      "true"を指定して下さい.
+ *
+ *  - data-thumb-width: 省略可. 既定値: null.
+ *    data-thumb-height: 省略可. 既定値: null.
+ *      サムネイルサイズの上限をそれぞれ指定して下さい.
+ *      これらはimgタグのwidth, heightに設定されます.
+ *      いずれの場合でもアスペクト比は維持されます.
+ *      指定がない場合は、vichan側jsonのtn_w, tn_h値がimgのwidth, heightとして使われます.
+ *      指定がある場合は、指定された値を上限として再計算されimgのwidth, heightに
+ *      指定されます.
+ *      widthのみが指定されている場合はheightに上限を設けずに再計算されます.
+ *      heightのみが指定されている場合はwidthに上限を設けずに再計算されます.
+ *
+ * - タグのclass構成.
+ *   例:
+ *   <div data-vichan-threadfilelist1="true" data-board="jp" data-thread="1234">
+ *     <div class="cell portrait">
+ *       <a href=/path/to/vichan/jp/res/1234.html#1235>
+ *         <img src=/path/to/vichan/jp/thumb/1763991120922.jpg>
+ *       </a>
+ *   </div>
+ *   サムネイルが縦長の場合にはportrait, 横長の場合にはlandscapeが追加されます.
+ *   このスクリプトはcssを提供しません.
  */
 
 window.vichanThreadFileList1 = function() {
@@ -95,26 +132,26 @@ window.vichanThreadFileList1 = function() {
 
   function create_thumb(file, post, thumb_width, thumb_height, v) {
     const div = document.createElement('div');
-    div.className = 'vichan threadfilelist1';
     if (file.tn_w >= file.tn_h) {
-      div.className += ' landscape';
+      div.className = 'cell landscape';
     } else {
-      div.className += ' portrait';
+      div.className = 'cell portrait';
     };
     const img = document.createElement('img');
     img.className = 'thumb';
     img.src = file.thumb_url;
-    const vichan_thumb_width = post.is_op ? v.thumb_op_width : v.thumb_width;
-    const vichan_thumb_height = post.is_op ? v.thumb_op_height : v.thumb_height;
+
     if (!thumb_width && !thumb_height) {
       img.width = file.tn_w;
       img.height = file.tn_h;
     } else if (thumb_width && !thumb_height) {
-      img.width = file.tn_w / vichan_thumb_width * thumb_width;
-      img.height = file.tn_h / vichan_thumb_width * thumb_width;
+      const scale = thumb_width / file.tn_w;
+      img.width = thumb_width;
+      img.height = file.tn_h * scale;
     } else if (!thumb_width && thumb_height) {
-      img.width = file.tn_w / vichan_thumb_height * thumb_height;
-      img.height = file.tn_h / vichan_thumb_height * thumb_height;
+      const scale = thumb_height / file.tn_h;
+      img.width = file.tn_w * scale;
+      img.height = thumb_height;
     } else {
       const scalew = thumb_width / file.tn_w;
       const scaleh = thumb_height / file.tn_h;
@@ -122,17 +159,7 @@ window.vichanThreadFileList1 = function() {
       img.width = file.tn_w * scale;
       img.height = file.tn_h * scale;
     };
-      
-    if (thumb_width) {
-      img.width = file.tn_w / vichan_thumb_width * thumb_width;
-    } else {
-      img.width = file.tn_w;
-    };
-    if (thumb_height) {
-      img.height = file.tn_h / vichan_thumb_height * thumb_height;
-    } else {
-      img.height = file.tn_h;
-    };
+
     img.alt = file.filename;
 
     const img_anchor = document.createElement('a');
