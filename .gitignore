@@ -13,6 +13,7 @@
 
 # instance-config
 /inc/secrets.php
+/inc/instance-config.php
 
 # .installed
 /.installed

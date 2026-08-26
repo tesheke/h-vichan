@@ -26,7 +26,7 @@
 		public function build($mod = false) {
 			global $config;
 			$boards = listBoards();
-			
+
 			$body = '';
 			$overflow = array();
 			$board = array(
@@ -55,7 +55,8 @@
 				}
 	
 				if($count < $this->settings['thread_limit']) {				
-					openBoard($post['board']);			
+					openBoard($post['board']);
+
 					$thread = new Thread($post, $mod ? '?/' : $config['root'], $mod);
 
 					$posts = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE `thread` = :id ORDER BY `id` DESC LIMIT :limit", $post['board']));
@@ -101,6 +102,14 @@
 			$body .= '<script> var overflow = ' . json_encode($overflow) . '</script>';
 			$body .= '<script type="text/javascript" src="/'.$this->settings['uri'].'/ukko.js"></script>';
 
+			/*
+			 * $configの値はukko_buildが呼び出された時点でランダムなboardのものになっている可能性がある。
+			 * 板を閉じて設定を読み込むことで、「サイトごと」の設定を読み込む。
+			 * これにより global_message などが /mod.php?/config で設定したものになる。
+			 */
+			self::closeBoard();
+			loadConfig();
+
 			return Element('index.html', array(
 				'config' => $config,
 				'board' => $board,
@@ -110,7 +119,11 @@
 				'boardlist' => createBoardlist($mod),
 			));
 		}
-		
+
+		static function closeBoard() {
+			unset($GLOBALS['board']);
+		}
+
 	};
-	
+
 ?>
